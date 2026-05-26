@@ -1,1 +1,22 @@
-# keepalive ping\n
+name: ModelScope Keep-Alive
+
+on:
+  schedule:
+    # 每 5 分钟触发一次（UTC 时间，北京时间需 -8）
+    - cron: '*/5 * * * *'
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping ModelScope Space
+        run: |
+          # 你的魔搭空间地址
+          SPACE_URL="https://modelscope.cn/studios/is3610303/openclaw-computer"
+          
+          echo "Pinging $SPACE_URL at $(date)"
+          curl -s -o /dev/null -w "%{http_code}" "$SPACE_URL" || true
+          
+          # 如果有 health endpoint，优先用
+          curl -s -o /dev/null -w "%{http_code}" "$SPACE_URL/health" || true
